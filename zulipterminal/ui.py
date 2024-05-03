@@ -112,9 +112,10 @@ class View(urwid.WidgetWrap):
             [display_key_for_urwid_key(key) for key in random_command["keys"]]
         )
         return [
-            "Help(?): ",
+            "Help[?] ",
             ("footer_contrast", f" {random_command_display_keys} "),
-            f" {random_command['help_text']}",
+            f" {random_command['help_text']} ",
+            ("footer_contrast", f" {random_command['key_context']} "),
         ]
 
     @asynch
