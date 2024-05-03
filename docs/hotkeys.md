@@ -23,8 +23,9 @@
 |Go right|<kbd>Right</kbd> / <kbd>l</kbd>|
 |Scroll up|<kbd>PgUp</kbd> / <kbd>K</kbd>|
 |Scroll down|<kbd>PgDn</kbd> / <kbd>J</kbd>|
+|Go to top / First message|<kbd>Home</kbd>|
 |Go to bottom / Last message|<kbd>End</kbd> / <kbd>G</kbd>|
-|Narrow to all messages|<kbd>a</kbd>|
+|Narrow to all messages around the selected message|<kbd>a</kbd>|
 |Narrow to all direct messages|<kbd>P</kbd>|
 |Narrow to all starred messages|<kbd>f</kbd>|
 |Narrow to messages in which you're mentioned|<kbd>#</kbd>|

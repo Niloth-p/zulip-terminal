@@ -97,6 +97,12 @@ KEY_BINDINGS: Dict[str, KeyBinding] = {
         'key_category': 'navigation',
         'key_context': 'general',
     },
+    'GO_TO_TOP': {
+        'keys': ['home'],
+        'help_text': 'Go to top / First message',
+        'key_category': 'navigation',
+        'key_context': 'general',
+    },
     'GO_TO_BOTTOM': {
         'keys': ['end', 'G'],
         'help_text': 'Go to bottom / Last message',
@@ -221,7 +227,7 @@ KEY_BINDINGS: Dict[str, KeyBinding] = {
     },
     'ALL_MESSAGES': {
         'keys': ['a'],
-        'help_text': 'Narrow to all messages',
+        'help_text': 'Narrow to all messages around the selected message',
         'key_category': 'navigation',
         'key_context': 'general',
     },
