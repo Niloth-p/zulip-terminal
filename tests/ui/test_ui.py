@@ -1,6 +1,7 @@
 from typing import Any, Callable, List, Optional
 
 import pytest
+from freezegun import freeze_time  # type: ignore [import-untyped]
 from pytest_mock import MockerFixture
 from urwid import Widget
 
@@ -109,14 +110,21 @@ class TestView:
         duration: Optional[float] = 5.3,
     ) -> None:
         mocker.patch(VIEW + ".get_random_help", return_value=["some help text"])
-        mock_sleep = mocker.patch("time.sleep")
+        mocked_alarm = mocker.patch(CONTROLLER + ".loop.set_alarm_in")
 
-        view.set_footer_text([custom_text], duration=duration)
+        with freeze_time() as frozen_datetime:
+            view.set_footer_text([custom_text], duration=duration)
 
-        view.frame.footer.set_text.assert_has_calls(
-            [mocker.call([custom_text]), mocker.call(["some help text"])]
-        )
-        mock_sleep.assert_called_once_with(duration)
+            view.frame.footer.set_text.assert_called_once_with([custom_text])
+            assert view.controller.update_screen.call_count == 1
+
+            frozen_datetime.tick(duration)
+
+            # Directly trigger the alarm's callback function
+            alarm_callback = mocked_alarm.call_args[0][1]
+            alarm_callback(None, None)
+
+        view.frame.footer.set_text.assert_called_with(["some help text"])
         assert view.controller.update_screen.call_count == 2
 
     @pytest.mark.parametrize(
