@@ -4,7 +4,6 @@ Defines the `View`, and controls where each component is displayed
 
 import random
 import re
-import time
 from typing import Any, Dict, List, Optional
 
 import urwid
@@ -120,7 +119,7 @@ class View(urwid.WidgetWrap):
         self,
         text_list: Optional[List[Any]] = None,
         style: str = "footer",
-        duration: Optional[float] = None,
+        duration: Optional[float] = 30,
     ) -> None:
         # Avoid updating repeatedly (then pausing and showing default text)
         # This is simple, though doesn't avoid starting one thread for each call
@@ -134,10 +133,14 @@ class View(urwid.WidgetWrap):
         self.frame.footer.set_text(text)
         self.frame.footer.set_attr_map({None: style})
         self.controller.update_screen()
+
+        if hasattr(self, "_footer_alarm_handle"):
+            self.controller.loop.remove_alarm(self._footer_alarm_handle)
         if duration is not None:
             assert duration > 0
-            time.sleep(duration)
-            self.set_footer_text()
+            self._footer_alarm_handle: Any = self.controller.loop.set_alarm_in(
+                duration, lambda loop, user_data: self.set_footer_text()
+            )
 
     @asynch
     def set_typeahead_footer(
