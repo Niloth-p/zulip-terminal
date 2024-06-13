@@ -20,6 +20,7 @@ def long_description():
 testing_minimal_deps = [
     "pytest~=7.2.0",
     "pytest-mock~=3.10.0",
+    "freezegun~=0.3.4",
 ]
 
 testing_plugin_deps = [
