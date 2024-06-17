@@ -84,7 +84,7 @@
 |Reply quoting the current message text|<kbd>></kbd>|
 |Reply directly to the sender of the current message|<kbd>R</kbd>|
 
-## Composing a Message
+## Writing a message
 |Command|Key Combination|
 | :--- | :---: |
 |Cycle through recipient and content boxes|<kbd>Tab</kbd>|
