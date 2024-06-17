@@ -9,7 +9,6 @@
 |Show/hide Markdown Help Menu|<kbd>Meta</kbd> + <kbd>m</kbd>|
 |Show/hide About Menu|<kbd>Meta</kbd> + <kbd>?</kbd>|
 |Go back|<kbd>Esc</kbd>|
-|Open draft message saved in this session|<kbd>d</kbd>|
 |Copy information from About Menu to clipboard|<kbd>c</kbd>|
 |Redraw screen|<kbd>Ctrl</kbd> + <kbd>l</kbd>|
 |Quit|<kbd>Ctrl</kbd> + <kbd>c</kbd>|
@@ -46,13 +45,7 @@
 ## Message actions
 |Command|Key Combination|
 | :--- | :---: |
-|Reply to the current message|<kbd>r</kbd> / <kbd>Enter</kbd>|
-|Reply mentioning the sender of the current message|<kbd>@</kbd>|
-|Reply quoting the current message text|<kbd>></kbd>|
-|Reply directly to the sender of the current message|<kbd>R</kbd>|
 |Edit message's content or topic|<kbd>e</kbd>|
-|New message to a stream|<kbd>c</kbd>|
-|New message to a person or group of people|<kbd>x</kbd>|
 |Show/hide emoji picker for current message|<kbd>:</kbd>|
 |Narrow to the stream of the current message|<kbd>s</kbd>|
 |Narrow to the topic of the current message|<kbd>S</kbd>|
@@ -75,6 +68,21 @@
 |Show/hide stream information & modify settings|<kbd>i</kbd>|
 |Show/hide stream members (from stream information)|<kbd>m</kbd>|
 |Copy stream email to clipboard (from stream information)|<kbd>c</kbd>|
+
+## Compose: New Message
+|Command|Key Combination|
+| :--- | :---: |
+|Open draft message saved in this session|<kbd>d</kbd>|
+|New message to a stream|<kbd>c</kbd>|
+|New message to a person or group of people|<kbd>x</kbd>|
+
+## Compose: Replies
+|Command|Key Combination|
+| :--- | :---: |
+|Reply to the current message|<kbd>r</kbd> / <kbd>Enter</kbd>|
+|Reply mentioning the sender of the current message|<kbd>@</kbd>|
+|Reply quoting the current message text|<kbd>></kbd>|
+|Reply directly to the sender of the current message|<kbd>R</kbd>|
 
 ## Composing a Message
 |Command|Key Combination|

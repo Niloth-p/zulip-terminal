@@ -55,7 +55,7 @@ KEY_BINDINGS: Dict[str, KeyBinding] = {
     'OPEN_DRAFT': {
         'keys': ['d'],
         'help_text': 'Open draft message saved in this session',
-        'key_category': 'general',
+        'key_category': 'new_msg',
     },
     'COPY_ABOUT_INFO': {
         'keys': ['c'],
@@ -105,22 +105,22 @@ KEY_BINDINGS: Dict[str, KeyBinding] = {
     'REPLY_MESSAGE': {
         'keys': ['r', 'enter'],
         'help_text': 'Reply to the current message',
-        'key_category': 'msg_actions',
+        'key_category': 'reply',
     },
     'MENTION_REPLY': {
         'keys': ['@'],
         'help_text': 'Reply mentioning the sender of the current message',
-        'key_category': 'msg_actions',
+        'key_category': 'reply',
     },
     'QUOTE_REPLY': {
         'keys': ['>'],
         'help_text': 'Reply quoting the current message text',
-        'key_category': 'msg_actions',
+        'key_category': 'reply',
     },
     'REPLY_AUTHOR': {
         'keys': ['R'],
         'help_text': 'Reply directly to the sender of the current message',
-        'key_category': 'msg_actions',
+        'key_category': 'reply',
     },
     'EDIT_MESSAGE': {
         'keys': ['e'],
@@ -130,12 +130,12 @@ KEY_BINDINGS: Dict[str, KeyBinding] = {
     'STREAM_MESSAGE': {
         'keys': ['c'],
         'help_text': 'New message to a stream',
-        'key_category': 'msg_actions',
+        'key_category': 'new_msg',
     },
     'PRIVATE_MESSAGE': {
         'keys': ['x'],
         'help_text': 'New message to a person or group of people',
-        'key_category': 'msg_actions',
+        'key_category': 'new_msg',
     },
     'CYCLE_COMPOSE_FOCUS': {
         'keys': ['tab'],
@@ -438,6 +438,8 @@ HELP_CATEGORIES = {
     "searching": "Searching",
     "msg_actions": "Message actions",
     "stream_list": "Stream list actions",
+    "new_msg": "Compose: New Message",
+    "reply": "Compose: Replies",
     "msg_compose": "Composing a Message",
     "editor_navigation": "Editor: Navigation",
     "editor_text_manipulation": "Editor: Text Manipulation",
