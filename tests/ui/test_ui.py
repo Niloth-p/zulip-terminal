@@ -120,7 +120,7 @@ class TestView:
 
             frozen_datetime.tick(duration)
 
-            # Trigger the alarm
+            # Directly trigger the alarm's callback function
             alarm_callback = mocked_alarm.call_args[0][1]
             alarm_callback(None, None)
 
@@ -349,8 +349,8 @@ class TestView:
         assert returned_key == key
         assert view.body.focus_col == 1
 
-    @pytest.mark.parametrize("key", keys_for_command("NEXT_HINT"))
-    def test_keypress_NEXT_HINT(
+    @pytest.mark.parametrize("key", keys_for_command("NEW_HINT"))
+    def test_keypress_NEW_HINT(
         self,
         view: View,
         mocker: MockerFixture,

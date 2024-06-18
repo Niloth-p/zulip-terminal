@@ -410,9 +410,9 @@ KEY_BINDINGS: Dict[str, KeyBinding] = {
         'help_text': 'Show/hide full raw message (from message information)',
         'key_category': 'msg_actions',
     },
-    'NEXT_HINT': {
+    'NEW_HINT': {
         'keys': ['tab'],
-        'help_text': 'Next footer hint',
+        'help_text': 'New footer hint',
         'key_category': 'general',
     },
 }
