@@ -405,6 +405,30 @@ class TestController:
         popup.assert_called_once()
         assert popup.call_args_list[0][0][1] == "area:error"
 
+    def test_attach_file(
+        self,
+        mocker: MockerFixture,
+        controller: Controller,
+        response: Dict[str, Any] = {"result": "success", "uri": "long uri value"},
+        compose_text: str = "test data",
+        file_name: str = "test_file.txt",
+    ) -> None:
+        controller.view.write_box = mocker.Mock()
+        controller.view.write_box.msg_write_box = mocker.Mock()
+        msg_write_box = controller.view.write_box.msg_write_box
+        msg_write_box.edit_text = compose_text
+        msg_write_box.set_edit_text = mocker.MagicMock()
+        mocked_report_success = mocker.patch(MODULE + ".Controller.report_success")
+
+        controller.attach_file(response["uri"], file_name)
+
+        msg_write_box.set_edit_text.assert_called_once_with(
+            compose_text + f"\n[{file_name}]({response['uri']})\n"
+        )
+        mocked_report_success.assert_called_once_with(
+            ["Attached file: ", ("footer_contrast", "test_file.txt")]
+        )
+
     @pytest.mark.parametrize(
         "url, webbrowser_name, expected_webbrowser_name",
         [

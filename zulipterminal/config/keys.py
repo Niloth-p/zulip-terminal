@@ -443,6 +443,11 @@ KEY_BINDINGS: Dict[str, KeyBinding] = {
         'help_text': 'New footer hotkey hint',
         'key_category': 'general',
     },
+    'ATTACH_FILE': {
+        'keys': ['meta a'],
+        'help_text': 'Attach file',
+        'key_category': 'compose_box',
+    },
 }
 # fmt: on
 

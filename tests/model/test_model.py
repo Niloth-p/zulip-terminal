@@ -4564,3 +4564,57 @@ class TestModel:
         model._register_desired_events.assert_has_calls(registers)
         assert self.client.get_events.called
         assert sleep.call_count == len(registers) - 1
+
+    def test_upload_file__error_opening(
+        self, mocker, model, file_path="path/to/test_file.txt"
+    ):
+        mocker.patch("builtins.open", side_effect=PermissionError)
+
+        model.upload_file(file_path)
+
+        self.controller.report_error.assert_called_once_with(
+            f"PermissionError: {file_path} could not be uploaded"
+        )
+
+    def test_upload_file__call_failed(
+        self,
+        mocker,
+        model,
+        response={"result": "error"},
+        file_path="path/to/test_file.txt",
+    ) -> None:
+        mocker.patch("builtins.open", mocker.mock_open(read_data="test data"))
+        self.client.upload_file.return_value = response
+
+        model.upload_file(file_path)
+
+        self.display_error_if_present.assert_called_once_with(
+            response, model.controller
+        )
+
+    def test_upload_file__success(
+        self,
+        mocker,
+        model,
+        file_path="path/to/test_file.txt",
+        expected_name="test_file.txt",
+        response={"result": "success", "uri": "uri"},
+        # compose_text="test data",
+    ) -> None:
+        mocker.patch("builtins.open", mocker.mock_open(read_data="test data"))
+        mocker.patch(CONTROLLER + ".client.upload_file", return_value=response)
+        attach_file = mocker.patch(CONTROLLER + ".attach_file")
+        # msg_write_box = mocker.patch(CONTROLLER + ".view.msg_write_box")
+        # msg_write_box.edit_text = compose_text
+        # msg_write_box.set_edit_text = mocker.MagicMock()
+
+        model.upload_file(file_path)
+
+        attach_file.assert_called_once_with(response["uri"], expected_name)
+
+        # self.controller.view.msg_write_box.set_edit_text.assert_called_once_with(
+        #         compose_text + f"\n[{expected_name}]({response['uri']})\n"
+        # )
+        # self.controller.report_success.assert_called_once_with(
+        #     ["Attached file: ", ("footer_contrast", "test_file.txt")]
+        # )

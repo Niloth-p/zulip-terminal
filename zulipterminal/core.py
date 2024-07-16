@@ -557,6 +557,13 @@ class Controller:
                 NoticeView(self, body, 60, "UTILITY PACKAGE MISSING"), "area:error"
             )
 
+    def attach_file(self, uri: str, name: str) -> None:
+        msg_write_box = self.view.write_box.msg_write_box
+        content = msg_write_box.edit_text + f"\n[{name}]({uri})\n"
+        msg_write_box.set_edit_text(content)
+        msg_write_box.edit_pos = len(content)
+        self.report_success(["Attached file: ", ("footer_contrast", name)])
+
     def _narrow_to(self, anchor: Optional[int], **narrow: Any) -> None:
         already_narrowed = self.model.set_narrow(**narrow)
 

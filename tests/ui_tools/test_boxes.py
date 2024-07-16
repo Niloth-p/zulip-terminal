@@ -1761,6 +1761,30 @@ class TestWriteBox:
 
         assert len(write_box.header_write_box.widget_list) == expected_box_size
 
+    @pytest.mark.parametrize("key", keys_for_command("ATTACH_FILE"))
+    @pytest.mark.parametrize(
+        "file_path, expected_call_count", [("test_file.txt", 1), ("", 0)]
+    )
+    def test_keypress_ATTACH_FILE(
+        self,
+        write_box: WriteBox,
+        mocker: MockerFixture,
+        file_path: str,
+        expected_call_count: int,
+        key: str,
+        widget_size: Callable[[Widget], urwid_Size],
+    ) -> None:
+        size = widget_size(write_box)
+        mocker.patch("tkinter.filedialog.askopenfilename", return_value=file_path)
+        mock_tk = mocker.patch(MODULE + ".Tk", autospec=True)
+        mock_root = mock_tk.return_value
+        mock_root.withdraw = mocker.Mock()
+
+        write_box.keypress(size, key)
+
+        assert self.view.model.upload_file.call_count == expected_call_count
+        assert self.view.set_footer_text.call_count == expected_call_count
+
 
 class TestPanelSearchBox:
     search_caption = " Search Results  "

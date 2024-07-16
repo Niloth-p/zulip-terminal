@@ -97,6 +97,7 @@
 |Cycle through autocomplete suggestions in reverse|<kbd>Ctrl</kbd> + <kbd>r</kbd>|
 |Exit message compose box|<kbd>Esc</kbd>|
 |Insert new line|<kbd>Enter</kbd>|
+|Attach file|<kbd>Meta</kbd> + <kbd>a</kbd>|
 
 ## Editor: Navigation
 |Command|Key Combination|

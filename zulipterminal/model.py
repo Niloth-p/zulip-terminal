@@ -9,6 +9,7 @@ from collections import defaultdict
 from concurrent.futures import Future, ThreadPoolExecutor, wait
 from copy import deepcopy
 from datetime import datetime
+from pathlib import Path
 from typing import (
     Any,
     Callable,
@@ -2137,3 +2138,15 @@ class Model:
                         self.controller.raise_exception_in_main_thread(
                             sys.exc_info(), critical=False
                         )
+
+    @asynch
+    def upload_file(self, file_path: str) -> None:
+        try:
+            with open(file_path, "rb") as fp:
+                response = self.client.upload_file(fp)
+            display_error_if_present(response, self.controller)
+            self.controller.attach_file(response["uri"], Path(file_path).name)
+        except Exception as e:
+            self.controller.report_error(
+                f"{e.__class__.__name__}: " f"{file_path} could not be uploaded"
+            )

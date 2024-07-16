@@ -7,6 +7,7 @@ import unicodedata
 from collections import Counter
 from datetime import datetime, timedelta
 from time import sleep
+from tkinter import Tk, filedialog
 from typing import Any, Callable, Dict, List, NamedTuple, Optional, Tuple
 
 import urwid
@@ -908,6 +909,14 @@ class WriteBox(urwid.Pile):
                     header.focus_col = self.FOCUS_HEADER_BOX_STREAM
             else:
                 header.focus_col = self.FOCUS_HEADER_BOX_RECIPIENT
+        elif is_command_key("ATTACH_FILE", key):
+            root = Tk()
+            root.withdraw()
+            file_path = filedialog.askopenfilename()
+            if file_path:
+                self.model.upload_file(file_path)
+                self.view.set_footer_text(["Uploading file..."])
+                return key
 
         key = super().keypress(size, key)
         return key
