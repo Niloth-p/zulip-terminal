@@ -7,6 +7,7 @@ import subprocess
 import time
 from collections import defaultdict
 from contextlib import contextmanager
+from dataclasses import dataclass
 from functools import partial, wraps
 from itertools import chain, combinations
 from re import ASCII, MULTILINE, findall, match
@@ -55,6 +56,14 @@ class StreamData(TypedDict):
     color: str
     stream_access_type: StreamAccessType
     description: str
+
+
+@dataclass
+class MessageData:
+    message: Message
+    topic_links: Dict[str, Tuple[str, int, bool]]
+    message_links: Dict[str, Tuple[str, int, bool]]
+    time_mentions: List[Tuple[str, str]]
 
 
 class EmojiData(TypedDict):

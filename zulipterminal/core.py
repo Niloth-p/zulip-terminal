@@ -25,7 +25,7 @@ from zulipterminal.config.ui_sizes import (
     MAX_LINEAR_SCALING_WIDTH,
     MIN_SUPPORTED_POPUP_WIDTH,
 )
-from zulipterminal.helper import asynch, suppress_output
+from zulipterminal.helper import MessageData, asynch, suppress_output
 from zulipterminal.model import Model
 from zulipterminal.platform_code import PLATFORM
 from zulipterminal.ui import Screen, View
@@ -258,20 +258,9 @@ class Controller:
     def show_topic_edit_mode(self, button: Any) -> None:
         self.show_pop_up(EditModeView(self, button), "area:msg")
 
-    def show_msg_info(
-        self,
-        msg: Message,
-        topic_links: Dict[str, Tuple[str, int, bool]],
-        message_links: Dict[str, Tuple[str, int, bool]],
-        time_mentions: List[Tuple[str, str]],
-    ) -> None:
+    def show_msg_info(self, msg_data: MessageData) -> None:
         msg_info_view = MsgInfoView(
-            self,
-            msg,
-            f"Message Information {SCROLL_PROMPT}",
-            topic_links,
-            message_links,
-            time_mentions,
+            self, f"Message Information {SCROLL_PROMPT}", msg_data
         )
         self.show_pop_up(msg_info_view, "area:msg")
 
@@ -336,60 +325,23 @@ class Controller:
             "area:user",
         )
 
-    def show_full_rendered_message(
-        self,
-        message: Message,
-        topic_links: Dict[str, Tuple[str, int, bool]],
-        message_links: Dict[str, Tuple[str, int, bool]],
-        time_mentions: List[Tuple[str, str]],
-    ) -> None:
+    def show_full_rendered_message(self, msg_data: MessageData) -> None:
         self.show_pop_up(
             FullRenderedMsgView(
-                self,
-                message,
-                topic_links,
-                message_links,
-                time_mentions,
-                f"Full rendered message {SCROLL_PROMPT}",
+                self, f"Full rendered message {SCROLL_PROMPT}", msg_data
             ),
             "area:msg",
         )
 
-    def show_full_raw_message(
-        self,
-        message: Message,
-        topic_links: Dict[str, Tuple[str, int, bool]],
-        message_links: Dict[str, Tuple[str, int, bool]],
-        time_mentions: List[Tuple[str, str]],
-    ) -> None:
+    def show_full_raw_message(self, msg_data: MessageData) -> None:
         self.show_pop_up(
-            FullRawMsgView(
-                self,
-                message,
-                topic_links,
-                message_links,
-                time_mentions,
-                f"Full raw message {SCROLL_PROMPT}",
-            ),
+            FullRawMsgView(self, f"Full raw message {SCROLL_PROMPT}", msg_data),
             "area:msg",
         )
 
-    def show_edit_history(
-        self,
-        message: Message,
-        topic_links: Dict[str, Tuple[str, int, bool]],
-        message_links: Dict[str, Tuple[str, int, bool]],
-        time_mentions: List[Tuple[str, str]],
-    ) -> None:
+    def show_edit_history(self, msg_data: MessageData) -> None:
         self.show_pop_up(
-            EditHistoryView(
-                self,
-                message,
-                topic_links,
-                message_links,
-                time_mentions,
-                f"Edit History {SCROLL_PROMPT}",
-            ),
+            EditHistoryView(self, f"Edit History {SCROLL_PROMPT}", msg_data),
             "area:msg",
         )
 

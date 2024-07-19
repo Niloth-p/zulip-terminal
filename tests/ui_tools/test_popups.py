@@ -9,7 +9,7 @@ from urwid import Columns, Pile, Text, Widget
 from zulipterminal.api_types import Message
 from zulipterminal.config.keys import is_command_key, keys_for_command
 from zulipterminal.config.ui_mappings import EDIT_MODE_CAPTIONS
-from zulipterminal.helper import CustomProfileData, TidiedUserInfo
+from zulipterminal.helper import CustomProfileData, MessageData, TidiedUserInfo
 from zulipterminal.ui_tools.messages import MessageBox
 from zulipterminal.ui_tools.views import (
     AboutView,
@@ -39,6 +39,11 @@ LISTWALKER = MODULE + ".urwid.SimpleFocusListWalker"
 #  * an independent popup class
 #  * the base general popup class
 #  * classes derived from the base popup class, sorted alphabetically
+
+
+@pytest.fixture
+def msg_data() -> MessageData:
+    return MessageData(Message(), OrderedDict(), OrderedDict(), list())
 
 
 class TestPopUpConfirmationView:
@@ -487,7 +492,9 @@ class TestUserInfoView:
 
 class TestFullRenderedMsgView:
     @pytest.fixture(autouse=True)
-    def mock_external_classes(self, mocker: MockerFixture, msg_box: MessageBox) -> None:
+    def mock_external_classes(
+        self, mocker: MockerFixture, msg_box: MessageBox, msg_data: MessageData
+    ) -> None:
         self.controller = mocker.Mock()
         mocker.patch.object(
             self.controller, "maximum_popup_dimensions", return_value=(64, 64)
@@ -496,23 +503,16 @@ class TestFullRenderedMsgView:
         # NOTE: Given that the FullRenderedMsgView just uses the message ID from
         # the message data currently, message_fixture is not used to avoid
         # adding extra test runs unnecessarily.
-        self.message = Message(id=1)
+        self.msg_data = msg_data
+        self.msg_data.message = Message(id=1)
         self.full_rendered_message = FullRenderedMsgView(
-            controller=self.controller,
-            message=self.message,
-            topic_links=OrderedDict(),
-            message_links=OrderedDict(),
-            time_mentions=list(),
-            title="Full Rendered Message",
+            controller=self.controller, title="Full Rendered Message", msg_data=msg_data
         )
 
     def test_init(self, msg_box: MessageBox) -> None:
         assert self.full_rendered_message.title == "Full Rendered Message"
         assert self.full_rendered_message.controller == self.controller
-        assert self.full_rendered_message.message == self.message
-        assert self.full_rendered_message.topic_links == OrderedDict()
-        assert self.full_rendered_message.message_links == OrderedDict()
-        assert self.full_rendered_message.time_mentions == list()
+        assert self.full_rendered_message.msg_data == self.msg_data
         assert self.full_rendered_message.header.widget_list == msg_box.header
         assert self.full_rendered_message.footer.widget_list == msg_box.footer
 
@@ -544,23 +544,23 @@ class TestFullRenderedMsgView:
         },
     )
     def test_keypress_show_msg_info(
-        self, key: str, widget_size: Callable[[Widget], urwid_Size]
+        self,
+        key: str,
+        widget_size: Callable[[Widget], urwid_Size],
+        msg_data: MessageData,
     ) -> None:
         size = widget_size(self.full_rendered_message)
 
         self.full_rendered_message.keypress(size, key)
 
-        self.controller.show_msg_info.assert_called_once_with(
-            msg=self.message,
-            topic_links=OrderedDict(),
-            message_links=OrderedDict(),
-            time_mentions=list(),
-        )
+        self.controller.show_msg_info.assert_called_once_with(self.msg_data)
 
 
 class TestFullRawMsgView:
     @pytest.fixture(autouse=True)
-    def mock_external_classes(self, mocker: MockerFixture, msg_box: MessageBox) -> None:
+    def mock_external_classes(
+        self, mocker: MockerFixture, msg_box: MessageBox, msg_data: MessageData
+    ) -> None:
         self.controller = mocker.Mock()
         mocker.patch.object(
             self.controller, "maximum_popup_dimensions", return_value=(64, 64)
@@ -572,23 +572,16 @@ class TestFullRawMsgView:
         # NOTE: Given that the FullRawMsgView just uses the message ID from
         # the message data currently, message_fixture is not used to avoid
         # adding extra test runs unnecessarily.
-        self.message = Message(id=1)
+        self.msg_data = msg_data
+        self.msg_data.message = Message(id=1)
         self.full_raw_message = FullRawMsgView(
-            controller=self.controller,
-            message=self.message,
-            topic_links=OrderedDict(),
-            message_links=OrderedDict(),
-            time_mentions=list(),
-            title="Full Raw Message",
+            controller=self.controller, title="Full Raw Message", msg_data=self.msg_data
         )
 
     def test_init(self, msg_box: MessageBox) -> None:
         assert self.full_raw_message.title == "Full Raw Message"
         assert self.full_raw_message.controller == self.controller
-        assert self.full_raw_message.message == self.message
-        assert self.full_raw_message.topic_links == OrderedDict()
-        assert self.full_raw_message.message_links == OrderedDict()
-        assert self.full_raw_message.time_mentions == list()
+        assert self.full_raw_message.msg_data == self.msg_data
         assert self.full_raw_message.header.widget_list == msg_box.header
         assert self.full_raw_message.footer.widget_list == msg_box.footer
 
@@ -626,17 +619,14 @@ class TestFullRawMsgView:
 
         self.full_raw_message.keypress(size, key)
 
-        self.controller.show_msg_info.assert_called_once_with(
-            msg=self.message,
-            topic_links=OrderedDict(),
-            message_links=OrderedDict(),
-            time_mentions=list(),
-        )
+        self.controller.show_msg_info.assert_called_once_with(self.msg_data)
 
 
 class TestEditHistoryView:
     @pytest.fixture(autouse=True)
-    def mock_external_classes(self, mocker: MockerFixture) -> None:
+    def mock_external_classes(
+        self, mocker: MockerFixture, msg_data: MessageData
+    ) -> None:
         self.controller = mocker.Mock()
         mocker.patch.object(
             self.controller, "maximum_popup_dimensions", return_value=(64, 64)
@@ -647,24 +637,20 @@ class TestEditHistoryView:
         # NOTE: Given that the EditHistoryView just uses the message ID from
         # the message data currently, message_fixture is not used to avoid
         # adding extra test runs unnecessarily.
-        self.message = Message(id=1)
+        self.msg_data = msg_data
+        self.msg_data.message = Message(id=1)
         self.edit_history_view = EditHistoryView(
             controller=self.controller,
-            message=self.message,
-            topic_links=OrderedDict(),
-            message_links=OrderedDict(),
-            time_mentions=list(),
             title="Edit History",
+            msg_data=self.msg_data,
         )
 
     def test_init(self) -> None:
         assert self.edit_history_view.controller == self.controller
-        assert self.edit_history_view.message == self.message
-        assert self.edit_history_view.topic_links == OrderedDict()
-        assert self.edit_history_view.message_links == OrderedDict()
-        assert self.edit_history_view.time_mentions == list()
+        assert self.edit_history_view.title == "Edit History"
+        assert self.edit_history_view.msg_data == self.msg_data
         self.controller.model.fetch_message_history.assert_called_once_with(
-            message_id=self.message["id"],
+            message_id=self.msg_data.message["id"],
         )
 
     @pytest.mark.parametrize("key", keys_for_command("MSG_INFO"))
@@ -697,12 +683,7 @@ class TestEditHistoryView:
 
         self.edit_history_view.keypress(size, key)
 
-        self.controller.show_msg_info.assert_called_once_with(
-            msg=self.message,
-            topic_links=OrderedDict(),
-            message_links=OrderedDict(),
-            time_mentions=list(),
-        )
+        self.controller.show_msg_info.assert_called_once_with(self.msg_data)
 
     @pytest.mark.parametrize(
         "snapshot",
@@ -955,7 +936,7 @@ class TestHelpView:
 class TestMsgInfoView:
     @pytest.fixture(autouse=True)
     def mock_external_classes(
-        self, mocker: MockerFixture, message_fixture: Message
+        self, mocker: MockerFixture, message_fixture: Message, msg_data: MessageData
     ) -> None:
         self.controller = mocker.Mock()
         mocker.patch.object(
@@ -972,31 +953,25 @@ class TestMsgInfoView:
             "Tue Mar 13 10:55:22",
             "Tue Mar 13 10:55:37",
         ]
+        self.msg_data = msg_data
+        self.msg_data.message = message_fixture
         self.msg_info_view = MsgInfoView(
             self.controller,
-            message_fixture,
             "Message Information",
-            OrderedDict(),
-            OrderedDict(),
-            list(),
+            self.msg_data,
         )
 
     def test_init(self, message_fixture: Message) -> None:
-        assert self.msg_info_view.msg == message_fixture
-        assert self.msg_info_view.topic_links == OrderedDict()
-        assert self.msg_info_view.message_links == OrderedDict()
-        assert self.msg_info_view.time_mentions == list()
+        assert self.msg_info_view.msg_data == self.msg_data
 
     def test_pop_up_info_order(self, message_fixture: Message) -> None:
         topic_links = OrderedDict([("https://bar.com", ("topic", 1, True))])
         message_links = OrderedDict([("image.jpg", ("image", 1, True))])
+        msg_data = MessageData(message_fixture, topic_links, message_links, list())
         msg_info_view = MsgInfoView(
             self.controller,
-            message_fixture,
             title="Message Information",
-            topic_links=topic_links,
-            message_links=message_links,
-            time_mentions=list(),
+            msg_data=msg_data,
         )
         msg_links = msg_info_view.button_widgets
         assert msg_links == [message_links, topic_links]
@@ -1039,24 +1014,14 @@ class TestMsgInfoView:
             "realm_allow_edit_history": realm_allow_edit_history,
         }
         msg_info_view = MsgInfoView(
-            self.controller,
-            message_fixture,
-            title="Message Information",
-            topic_links=OrderedDict(),
-            message_links=OrderedDict(),
-            time_mentions=list(),
+            self.controller, title="Message Information", msg_data=self.msg_data
         )
         size = widget_size(msg_info_view)
 
         msg_info_view.keypress(size, key)
 
         if msg_info_view.show_edit_history_label:
-            self.controller.show_edit_history.assert_called_once_with(
-                message=message_fixture,
-                topic_links=OrderedDict(),
-                message_links=OrderedDict(),
-                time_mentions=list(),
-            )
+            self.controller.show_edit_history.assert_called_once_with(self.msg_data)
         else:
             self.controller.show_edit_history.assert_not_called()
 
@@ -1068,22 +1033,14 @@ class TestMsgInfoView:
         widget_size: Callable[[Widget], urwid_Size],
     ) -> None:
         msg_info_view = MsgInfoView(
-            self.controller,
-            message_fixture,
-            title="Message Information",
-            topic_links=OrderedDict(),
-            message_links=OrderedDict(),
-            time_mentions=list(),
+            self.controller, title="Message Information", msg_data=self.msg_data
         )
         size = widget_size(msg_info_view)
 
         msg_info_view.keypress(size, key)
 
         self.controller.show_full_rendered_message.assert_called_once_with(
-            message=message_fixture,
-            topic_links=OrderedDict(),
-            message_links=OrderedDict(),
-            time_mentions=list(),
+            self.msg_data
         )
 
     @pytest.mark.parametrize("key", keys_for_command("FULL_RAW_MESSAGE"))
@@ -1094,23 +1051,13 @@ class TestMsgInfoView:
         widget_size: Callable[[Widget], urwid_Size],
     ) -> None:
         msg_info_view = MsgInfoView(
-            self.controller,
-            message_fixture,
-            title="Message Information",
-            topic_links=OrderedDict(),
-            message_links=OrderedDict(),
-            time_mentions=list(),
+            self.controller, title="Message Information", msg_data=self.msg_data
         )
         size = widget_size(msg_info_view)
 
         msg_info_view.keypress(size, key)
 
-        self.controller.show_full_raw_message.assert_called_once_with(
-            message=message_fixture,
-            topic_links=OrderedDict(),
-            message_links=OrderedDict(),
-            time_mentions=list(),
-        )
+        self.controller.show_full_raw_message.assert_called_once_with(self.msg_data)
 
     @pytest.mark.parametrize(
         "key", {*keys_for_command("EXIT_POPUP"), *keys_for_command("MSG_INFO")}
@@ -1201,16 +1148,12 @@ class TestMsgInfoView:
         self,
         message_fixture: Message,
         to_vary_in_each_message: Message,
+        msg_data: MessageData,
     ) -> None:
-        varied_message = message_fixture
-        varied_message.update(to_vary_in_each_message)
+        msg_data.message = message_fixture
+        msg_data.message.update(to_vary_in_each_message)
         self.msg_info_view = MsgInfoView(
-            self.controller,
-            varied_message,
-            "Message Information",
-            OrderedDict(),
-            OrderedDict(),
-            list(),
+            self.controller, "Message Information", msg_data
         )
         # 12 = 7 labels + 2 blank lines + 1 'Reactions' (category)
         # + 4 reactions (excluding 'Message Links').
